@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "URL Redirector",
+  "version": "1.0",
+  "description": "Redirects current page to a specified URL",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "js": ["scripts/content.js"],
+      "matches": ["https://www.usvisascheduling.com/*/*"]
+    }
+  ]
+}
