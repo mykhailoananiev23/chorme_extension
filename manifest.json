@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "URL Redirector",
+  "name": "USVISA Plus",
   "version": "1.0",
   "description": "Redirects current page to a specified URL",
   "permissions": [
@@ -16,7 +16,7 @@
   "content_scripts": [
     {
       "js": ["scripts/content.js"],
-      "matches": ["https://www.usvisascheduling.com/*/*"]
+      "matches": ["https://www.usvisascheduling.com/*"]
     }
   ]
 }

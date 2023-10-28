@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <select id="mySelect">
+      <option value="option1">Option 1</option>
+      <option value="option2">Option 2</option>
+      <option value="option3">Option 3</option>
+    </select>
+    
+    <button id="openOptionsButton">Open Options</button>
+    
+    
+    <script>
+      // Get a reference to the select element
+const select = document.getElementById("mySelect");
+
+// Get a reference to the button
+const openOptionsButton = document.getElementById("openOptionsButton");
+
+// Click event handler for the button
+openOptionsButton.addEventListener("click", function() {
+  // Simulate a click event on the select element to open its options
+  const event = new Event("click", { bubbles: true, cancelable: true });
+  select.dispatchEvent(event);
+});
+    </script>
+  </body>
+</html>
