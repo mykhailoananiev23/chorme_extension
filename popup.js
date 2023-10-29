@@ -21,8 +21,8 @@ function sendData() {
 
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     var activeTab = tabs[0];
-    var newUrl = "https://www.usvisascheduling.com/en-US/ofc-schedule/";
-    chrome.tabs.update(activeTab.id, { url: newUrl }, function name(params) {
+    // var newUrl = "https://www.usvisascheduling.com/en-US/ofc-schedule/";
+    // chrome.tabs.update(activeTab.id, { url: newUrl }, function name(params) {
       (async () => {
         try {
           const [tab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
@@ -34,7 +34,7 @@ function sendData() {
           console.log(error)
           return false;          
         }
-      })();
+      // })();
     });
   });
 }

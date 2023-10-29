@@ -16,7 +16,7 @@
   "content_scripts": [
     {
       "js": ["scripts/content.js"],
-      "matches": ["https://www.usvisascheduling.com/*"]
+      "matches": ["https://www.usvisascheduling.com/en-US/*"]
     }
   ]
 }
