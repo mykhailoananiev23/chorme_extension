@@ -5,7 +5,9 @@
   "description": "Redirects current page to a specified URL",
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "tabs",
+    "storage"
   ],
   "background": {
     "service_worker": "background.js"

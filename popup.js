@@ -12,29 +12,22 @@ function isJSON(str) {
 }
 
 function sendData() {
-  var textarea = document.getElementById("userInfo");
-  if(!isJSON(textarea.value)){
-    alert("Please input your infomation correctly!")
-    return false;
-  }
-  var userInfo = JSON.parse(textarea.value)
-
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    var activeTab = tabs[0];
-    // var newUrl = "https://www.usvisascheduling.com/en-US/ofc-schedule/";
-    // chrome.tabs.update(activeTab.id, { url: newUrl }, function name(params) {
-      (async () => {
-        try {
-          const [tab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
-          const response = await chrome.tabs.sendMessage(tab.id, {greeting: "hello", user: userInfo});
-          // do something with response here, not outside the function
-          console.log(response);
-          return true;
-        } catch (error) {
-          console.log(error)
-          return false;          
-        }
-      // })();
-    });
-  });
+//   var textarea = document.getElementById("userInfo");
+//   if(!isJSON(textarea.value)){
+//     alert("Please input your infomation correctly!")
+//     return false;
+//   }
+//   var userInfo = JSON.parse(textarea.value)
+  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+    // tabs is an array of tabs that match the query
+    if (tabs.length > 0) {
+        const currentTab = tabs[0];
+        // var newUrl = "https://www.usvisascheduling.com/en-US/ofc-schedule/";
+        // chrome.tabs.update(currentTab.id, { url: newUrl }, function () {
+            chrome.tabs.sendMessage(currentTab.id, { type: 'popup-message', message: "Message test is success!" });
+        // });
+    } else {
+        console.log('No active tabs found.');
+    }
+});
 }

@@ -1,59 +1,106 @@
-var clickEvent = new Event("click", { bubbles: true, cancelable: true });
+var intervalId;
+let currentStep = 0;
+
+var userInfo = {
+  "OFC-POST": "CHENNAI VAC",
+  "startdate-OFC": "10-10-2023",
+  "enddate-OFC": "11-10-2023",
+  "starttime-OFC": "1:00",
+  endTimeOFC: "5:00",
+  "Consular-POST": "CHENNAI",
+  "Consular-POST-startdate": "10-10-2023",
+  "Consular-POST-endtdate": "12-10-2023",
+  "Consular-POST-starttime": "1:00",
+  "Consular-POST-endtime": "*",
+};
+
+var ele_matchDates = [];
+
+const functionsToExecute = [
+  function step1(step) {
+    // set OFC Post value setting
+    var post_select = document.getElementById("post_select");
+    if (post_select) {
+      for (var i = 0; i < post_select.options.length; i++) {
+        if (post_select.options[i].text === userInfo["OFC-POST"]) {
+          post_select.selectedIndex = i;
+          break; // Exit the loop once a match is found
+        }
+      }
+    }
+    console.log(step);
+  },
+  function step2(step) {
+    // open the Calendar
+    var openCalendar = document.getElementById("datepicker");
+    openCalendar && openCalendar.focus();
+    console.log(step);
+  },
+  function step3(step) {
+    // searching Available Date
+    var calendar = document.querySelector(".ui-datepicker-calendar");
+    if (calendar) {
+      var trs = calendar.childNodes[1].childNodes;
+      for (let i = 0; i < trs.length; i++) {
+        var tds = trs[i].childNodes;
+        for (let j = 0; j < tds.length; j++) {
+          const element = tds[j];
+          if (
+            element.classList.length > 0 &&
+            element.classList.contains("greenday")
+          ) {
+            ele_matchDates.push(element);
+            currentStep = 4;
+          }
+        }
+      }
+    }
+    console.log(step);
+  },
+  function step4(step) {
+    // Click the Next
+    var calender_mon_next = document.querySelector('[data-handler="next"]');
+    if (!calender_mon_next) {
+      clearInterval(intervalId);
+    } else {
+      calender_mon_next.click();
+      console.log(step);
+    }
+  },
+  function step5(step) {
+    // set a schedule time
+    console.log(step);
+  },
+  function step6(step) {
+    // click the submit button
+    var submitBtn = document.getElementById("submitbtn");
+    submitBtn && submitBtn.click();
+    console.log(step);
+  },
+];
+
+// Function to execute the next step
+function executeNextStep() {
+  if (currentStep < functionsToExecute.length) {
+    functionsToExecute[currentStep](currentStep);
+    if (currentStep > 3) {
+      if (ele_matchDates.length == 0) {
+        currentStep = 2;
+      }
+    }
+    currentStep++;
+  } else {
+    clearInterval(intervalId);
+    console.log(ele_matchDates);
+  }
+}
+
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (
-    request.greeting === "hello" &&
-    window.location.pathname.startsWith("/en-US")
-  ) {
-        console.log(request.user)
-        setTimeout(function () {
-            var select = document.getElementById("post_select");
-        
-            var textToMatch = "CHENNAI VAC";
-        
-            // Loop through the options to find the one with the matching text
-            if (select) {
-                for (var i = 0; i < select.options.length; i++) {
-                    if (select.options[i].text === textToMatch) {
-                        // Set the selectedIndex to the found option's index
-                        select.selectedIndex = i;
-                        break; // Exit the loop once a match is found
-                    }
-                }
-            }
-            setTimeout(function () {
-                var openCalendar = document.getElementById("datepicker");
-                openCalendar && openCalendar.focus();
-                setTimeout(function () {
-                    var matchedDate;
-                    var step = setInterval(matchData, 2000);
-        
-                    function matchData() {
-                        var calender_mon_next = document.querySelector('[data-handler="next"]');
-                        var days = document.querySelector(".ui-datepicker-calendar");
-                        var trs = days.childNodes[1].childNodes;
-                        for (let i = 0; i < trs.length; i++) {
-                            var tds = trs[i].childNodes
-                            for (let j = 0; j < tds.length; j++) {
-                                const element = tds[j];
-                                if(element.classList.length > 0 && element.classList.contains("greenday")) {
-                                    i = trs.length;
-                                    j = tds.length
-                                    matchedDate = element
-                                    console.log(element)
-                                    clearInterval(step)
-                                }
-                            }
-                        }
-                        if (calender_mon_next && (matchedDate != undefined)) {
-                            console.log(i + " =====" + j, element)
-                            calender_mon_next.click();
-                        }
-                    }
-                }, 2000);
-            }, 2000);
-        }, 2000);
-
-        sendResponse({ farewell: "goodbye" });
+    if (request.type === "popup-message") {
+        const message = request.message;
+        console.log(message)
+        // Set up an interval to execute the steps every 1 seconds
+        intervalId = setInterval(executeNextStep, 3000);
     }
 });
