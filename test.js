@@ -24,7 +24,10 @@ function convrtTime(str) {
 
     return date;
 }
-
+/**
+ * no Matched file
+ */
+// var matched_date_flg = true, matched_time_flg = true; 
 var ele_matchDates = [];
 var ele_matchTimes = [];
 
@@ -91,7 +94,7 @@ const functionsToExecute = [
                 for (let j = 0; j < tds.length; j++) {
                     const element = tds[j];
                     var day = element.childNodes[0].textContent
-                    if(!day || (convertDate(sel_month + ","  + sel_year, day) < new Date(userInfo["startdate-OFC"]) || convertDate(sel_month + ","  + sel_year, day) > new Date(userInfo["enddate-OFC"]))){
+                    if((!day || (convertDate(sel_month + ","  + sel_year, day) < new Date(userInfo["startdate-OFC"]) || convertDate(sel_month + ","  + sel_year, day) > new Date(userInfo["enddate-OFC"])))){
                         continue ;
                     }
                     if(element.classList.length > 0 && element.classList.contains("ui-state-disabled")) {
@@ -164,10 +167,11 @@ const functionsToExecute = [
     }
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
-    // alert()
-    console.log("new Actions")
-  })
   
   // Set up an interval to execute the steps every 1 seconds
   const intervalId = setInterval(executeNextStep, 1000);  
+  
+  document.addEventListener("DOMContentLoaded", function () {
+    // alert()
+    console.log("Wordflow 2!")
+  })
