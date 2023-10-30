@@ -38,7 +38,7 @@ const functionsToExecute = [
         var post_select = document.getElementById("post_select")
         if (post_select) {
             for (var i = 0; i < post_select.options.length; i++) {
-                if (post_select.options[i].text === userInfo["OFC-POST"]) {
+                if (post_select.options[i].text == userInfo["OFC-POST"]) {
                     post_select.value = post_select.options[i].value
                     const event = new Event("change", {
                         bubbles: true, // Allow the event to bubble up the DOM tree
@@ -191,6 +191,12 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 });
 
 
+/**
+ * 
+ * /en-US/schedule/ page
+ * 
+ */
+
 
 const functionsToExecute2 = [
     function step1(step) { // set OFC Post value setting
@@ -214,6 +220,8 @@ const functionsToExecute2 = [
         var openCalendar = document.getElementById("datepicker");
         if(openCalendar){
             openCalendar.focus();
+            var calendar = document.getElementById("ui-datepicker-div")
+            calendar.setAttribute("display", "block")
         }
         console.log(step)
     },
@@ -331,7 +339,6 @@ function executeNextStep2() {
     }
 }
 
-console.log(window.location.pathname)
 if(window.location.pathname == "/en-US/schedule/"){
     intervalId = setInterval(executeNextStep2, 3000);
 }
