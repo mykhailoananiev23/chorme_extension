@@ -1,6 +1,6 @@
 let currentStep = 0;
 var continue_flg = true;
-var userInfo = {"OFC-POST" :  "CHENNAI VAC", "startdate-OFC" : "11-10-2023", "enddate-OFC" : "12-10-2023", "starttime-OFC" : "1:00", "endTimeOFC" : "5:00", "Consular-POST": "CHENNAI", "Consular-POST-startdate": "10-10-2023", "Consular-POST-endtdate": "12-10-2023", "Consular-POST-starttime": "1:00", "Consular-POST-endtime" : "*"}
+var userInfo = {"OFC-POST" :  "CHENNAI VAC", "startdate-OFC" : "11-10-2023", "enddate-OFC" : "12-10-2023", "starttime-OFC" : "9:00", "endTime-OFC" : "15:00", "Consular-POST": "CHENNAI", "Consular-POST-startdate": "10-10-2023", "Consular-POST-endtdate": "12-10-2023", "Consular-POST-starttime": "1:00", "Consular-POST-endtime" : "*"}
 function convertDate(str, day) {
     const parts = str.split(',');
 
@@ -15,7 +15,18 @@ function convertDate(str, day) {
     var result = day ? new Date(year, month, Number(day)) : new Date(year, month, 14)
     return result;
 }
-var ele_matchDates = []
+
+function convrtTime(str) {
+    const [hours, minutes] = str.split(':');
+    const date = new Date();
+    date.setHours(parseInt(hours, 10));
+    date.setMinutes(parseInt(minutes, 10));
+
+    return date;
+}
+
+var ele_matchDates = [];
+var ele_matchTimes = [];
 
 const functionsToExecute = [
     function step1(step) { // set OFC Post value setting
@@ -85,8 +96,7 @@ const functionsToExecute = [
                     }
                     if(element.classList.length > 0 && element.classList.contains("ui-state-disabled")) {
                         ele_matchDates.push(element)
-                        console.log(element)
-                        currentStep = 4;
+                        currentStep = 3;
                     }
                 }
             }
@@ -94,24 +104,35 @@ const functionsToExecute = [
         console.log(step)
     },
     function step4(step) { // Click the Next
+        
         var calender_mon_next = document.querySelector('[data-handler="next"]');
         if(!calender_mon_next){
             clearInterval(intervalId);
         } else {
             calender_mon_next.click()
-            console.log(step)
         }
+        console.log(step)
     },
     function step5(step) { // set a schedule time
-        const timeRadios = document.querySelectorAll('[name="schedule-entries"]');
-        timeRadios.forEach((ele) => {
-            const [hours, minutes] = ele.parentNode.textContent.split(':');
-            const date = new Date();
-            date.setHours(parseInt(hours, 10));
-            date.setMinutes(parseInt(minutes, 10));
+        /**
+         * Submit Button Click Code
+         */
+        var available_btn = ele_matchDates[0];
+        available_btn && available_btn.click();
+        /**
+         * 
+         */
 
-            // console.log(date);      
-        })
+        const timeRadios = document.querySelectorAll('[name="schedule-entries"]');
+        for (let j = 0; j < timeRadios.length; j++) {
+            const ele = timeRadios[j];
+            var a_time_cell = convrtTime(ele.parentNode.textContent)
+            var u_s_t = convrtTime(userInfo["starttime-OFC"]), u_e_t = convrtTime(userInfo["endTime-OFC"]);
+            if((new Date(a_time_cell) >= new Date(u_s_t)) && (new Date(a_time_cell) <= new Date(u_e_t))){
+                ele.click()
+                break ;
+            }
+        }
         console.log(step)
     },
     function step6(step) { // click the submit button
@@ -126,20 +147,27 @@ const functionsToExecute = [
   // Function to execute the next step
   function executeNextStep() {
     if (currentStep < functionsToExecute.length) {
-        functionsToExecute[currentStep](currentStep);
         if(currentStep > 3){
             if(ele_matchDates.length == 0){
                 currentStep = 1;    
-            } else {
-                currentStep = 4
             }
         }
+        // if(currentStep > 4){
+        //     if(ele_matchTimes.length == 0){
+        //         currentStep = 4;    
+        //     }
+        // }
+        functionsToExecute[currentStep](currentStep);
         currentStep++;
     } else {
         clearInterval(intervalId);
-        console.log(ele_matchDates);
     }
   }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // alert()
+    console.log("new Actions")
+  })
   
   // Set up an interval to execute the steps every 1 seconds
   const intervalId = setInterval(executeNextStep, 1000);  
