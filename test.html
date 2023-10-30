@@ -12,13 +12,16 @@
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script>
       const currentDate = new Date();
-      currentDate.setDate(currentDate.getDate() + 120);
+      const maxDate = new Date(currentDate);
+      maxDate.setDate(currentDate.getDate() + 30);
+      const minDate = new Date(currentDate);
+      minDate.setDate(currentDate.getDate() - 30);
       $(function () {
         $("#datepicker").datepicker({
           changeMonth: true,
           changeYear: true,
-          minDate: new Date(),
-          maxDate: currentDate,
+          minDate: new Date(minDate),
+          maxDate: new Date(maxDate),
         });
       });
     </script>

@@ -6,7 +6,7 @@ var userInfo = {
   "startdate-OFC": "10-10-2023",
   "enddate-OFC": "11-10-2023",
   "starttime-OFC": "1:00",
-  endTimeOFC: "5:00",
+  "endTimeOFC": "5:00",
   "Consular-POST": "CHENNAI",
   "Consular-POST-startdate": "10-10-2023",
   "Consular-POST-endtdate": "12-10-2023",
