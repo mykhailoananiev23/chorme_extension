@@ -235,6 +235,7 @@ const functionsToExecute2 = [
         var openCalendar = document.getElementById("datepicker");
         if(openCalendar){
             if(openCalendar.value == ""){
+                clearInterval(intervalId);
                 alert('Matched Data is not exist!')
             } else {
                 if(openCalendar.value == "Loading..."){
