@@ -16,6 +16,13 @@ function convertDate(str, day) {
     return result;
 }
 
+const clickEvent = new Event("click", {
+  bubbles: true,
+  cancelable: true,
+});
+
+
+
 function convrtTime(str) {
     const [hours, minutes] = str.split(':');
     const date = new Date();
@@ -24,7 +31,10 @@ function convrtTime(str) {
 
     return date;
 }
-
+/**
+ * no Matched file
+ */
+// var matched_date_flg = true, matched_time_flg = true; 
 var ele_matchDates = [];
 var ele_matchTimes = [];
 
@@ -34,7 +44,13 @@ const functionsToExecute = [
         if (post_select) {
             for (var i = 0; i < post_select.options.length; i++) {
                 if (post_select.options[i].text === userInfo["OFC-POST"]) {
-                    post_select.selectedIndex = i;
+                    post_select.value = post_select.options[i].value
+                    const event = new Event("change", {
+                        bubbles: true, // Allow the event to bubble up the DOM tree
+                        cancelable: true, // Allow the event to be cancelable
+                    });
+                    post_select.dispatchEvent(event);
+                    // post_select.selectedIndex = i;
                     break; // Exit the loop once a match is found
                 }
             }
@@ -43,7 +59,13 @@ const functionsToExecute = [
     },
     function step2(step) { // open the Calendar
         var openCalendar = document.getElementById("datepicker");
-        openCalendar && openCalendar.focus();
+        if(openCalendar){
+            openCalendar.dispatchEvent(clickEvent);
+            openCalendar.focus();
+            $('.hasDatepicker').click()
+            // var calendar = document.getElementById("ui-datepicker-div")
+            // calendar.style.display = "block";
+        }
         console.log(step)
     },
     function step3(step) { // searching Available Date
@@ -91,7 +113,7 @@ const functionsToExecute = [
                 for (let j = 0; j < tds.length; j++) {
                     const element = tds[j];
                     var day = element.childNodes[0].textContent
-                    if(!day || (convertDate(sel_month + ","  + sel_year, day) < new Date(userInfo["startdate-OFC"]) || convertDate(sel_month + ","  + sel_year, day) > new Date(userInfo["enddate-OFC"]))){
+                    if((!day || (convertDate(sel_month + ","  + sel_year, day) < new Date(userInfo["startdate-OFC"]) || convertDate(sel_month + ","  + sel_year, day) > new Date(userInfo["enddate-OFC"])))){
                         continue ;
                     }
                     if(element.classList.length > 0 && element.classList.contains("ui-state-disabled")) {
@@ -164,10 +186,11 @@ const functionsToExecute = [
     }
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
-    // alert()
-    console.log("new Actions")
-  })
   
   // Set up an interval to execute the steps every 1 seconds
   const intervalId = setInterval(executeNextStep, 1000);  
+  
+  document.addEventListener("DOMContentLoaded", function () {
+    // alert()
+    console.log("Wordflow 2!")
+  })
