@@ -1,19 +1,13 @@
 var intervalId;
-
-let currentStep = 0;
+let currentStep = 0, currentStep2 = 0;
 var continue_flg = true;
 var userInfo = {"OFC-POST" :  "CHENNAI VAC", "startdate-OFC" : "11-10-2023", "enddate-OFC" : "12-10-2023", "starttime-OFC" : "9:00", "endTime-OFC" : "15:00", "Consular-POST": "KOLKATA", "Consular-POST-startdate": "10-10-2023", "Consular-POST-endtdate": "12-10-2024", "Consular-POST-starttime": "8:00", "Consular-POST-endtime" : "17:00"}
 function convertDate(str, day) {
     const parts = str.split(',');
-
     const monthName = parts[0];
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const month = monthNames.indexOf(monthName);
-
-    // Extract the year
     const year = parseInt(parts[1], 10);
-
-    // Create a new Date object
     var result = day ? new Date(year, month, Number(day)) : new Date(year, month, 14)
     return result;
 }
@@ -26,14 +20,22 @@ function convrtTime(str) {
 
     return date;
 }
-/**
- * no Matched file
- */
-// var matched_date_flg = true, matched_time_flg = true; 
+
 var ele_matchDates = [];
-var ele_matchTimes = [];
+var ele_matchTimes2 = [];
 
 const functionsToExecute = [
+    function loading(step) {
+        var g_mem = document.getElementById("gm_select");
+        if(g_mem){
+            if(g_mem.childNodes.length <1){
+                currentStep = 0;
+            } else {
+                currentStep = 1;
+            }
+        }
+        console.log(step)
+    },
     function step1(step) { // set OFC Post value setting
         var post_select = document.getElementById("post_select")
         if (post_select) {
@@ -49,14 +51,21 @@ const functionsToExecute = [
                 }
             }
         }
+        currentStep = 2;
         console.log(step)
     },
     function step2(step) { // open the Calendar
         var openCalendar = document.getElementById("datepicker");
         if(openCalendar){
-            openCalendar.focus();
-            var calendar = document.getElementById("ui-datepicker-div")
-            calendar.setAttribute("display", "block")
+            console.log(openCalendar.value)
+            if(openCalendar.value == "Select Date"){
+                openCalendar.focus();
+                var calendar = document.getElementById("ui-datepicker-div")
+                calendar.style.display = "block"
+                currentStep = 3;
+            } else {
+                currentStep = 2
+            }
         }
         console.log(step)
     },
@@ -96,6 +105,7 @@ const functionsToExecute = [
             }
             
             if(new Date(sel_date) >= new Date(cond_date_end)){
+                alert("No correct User Information!")
                 clearInterval(intervalId)
             }
 
@@ -110,10 +120,12 @@ const functionsToExecute = [
                     }
                     if(element.classList.length > 0 && element.classList.contains("greenday")) {
                         ele_matchDates.push(element)
-                        currentStep = 3;
+                        currentStep = 5;
+                        return ;
                     }
                 }
             }
+            currentStep = 4;
         }
         console.log(step)
     },
@@ -125,31 +137,33 @@ const functionsToExecute = [
         } else {
             calender_mon_next.click()
         }
+        currentStep = 3;
         console.log(step)
     },
     function step5(step) { // set a schedule time
-        /**
-         * Submit Button Click Code
-         */
         var available_btn = ele_matchDates[0];
         available_btn && available_btn.click();
-        /**
-         * 
-         */
-
+        currentStep = 6;
+    },
+    function step6(step) {
         const timeRadios = document.querySelectorAll('[name="schedule-entries"]');
-        for (let j = 0; j < timeRadios.length; j++) {
-            const ele = timeRadios[j];
-            var a_time_cell = convrtTime(ele.parentNode.textContent)
-            var u_s_t = convrtTime(userInfo["starttime-OFC"]), u_e_t = convrtTime(userInfo["endTime-OFC"]);
-            if((new Date(a_time_cell) >= new Date(u_s_t)) && (new Date(a_time_cell) <= new Date(u_e_t))){
-                ele.click()
-                break ;
+        if(timeRadios.length == 0){
+            currentStep = 6;
+        } else {
+            for (let j = 0; j < timeRadios.length; j++) {
+                const ele = timeRadios[j];
+                var a_time_cell = convrtTime(ele.parentNode.textContent)
+                var u_s_t = convrtTime(userInfo["starttime-OFC"]), u_e_t = convrtTime(userInfo["endTime-OFC"]);
+                if((new Date(a_time_cell) >= new Date(u_s_t)) && (new Date(a_time_cell) <= new Date(u_e_t))){
+                    ele.click()
+                    break ;
+                }
             }
+            currentStep = 7;
         }
         console.log(step)
     },
-    function step6(step) { // click the submit button
+    function step7(step) { // click the submit button
         var submitBtn = document.getElementById("submitbtn");
         submitBtn && submitBtn.click()
         console.log(step);
@@ -161,18 +175,7 @@ const functionsToExecute = [
   // Function to execute the next step
   function executeNextStep() {
     if (currentStep < functionsToExecute.length) {
-        if(currentStep > 3){
-            if(ele_matchDates.length == 0){
-                currentStep = 1;    
-            }
-        }
-        // if(currentStep > 4){
-        //     if(ele_matchTimes.length == 0){
-        //         currentStep = 4;    
-        //     }
-        // }
         functionsToExecute[currentStep](currentStep);
-        currentStep++;
     } else {
         clearInterval(intervalId);
     }
@@ -182,11 +185,11 @@ const functionsToExecute = [
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.type === "popup-message") {
         const message = request.message;
-        userInfo = message
-        // // Set up an interval to execute the steps every 1 seconds
-        if(window.location.pathname == "/en-US/schedule/")[
+        userInfo = message;
+        if(window.location.pathname == "/en-US/ofc-schedule/"){
+            console.log(message);
             intervalId = setInterval(executeNextStep, 3000)
-        ]
+        }
     }
 });
 
@@ -199,6 +202,17 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 
 const functionsToExecute2 = [
+    function loading(step) {
+        var g_mem = document.getElementById("gm_select");
+        if(g_mem){
+            if(g_mem.childNodes.length <1){
+                currentStep2 = 0;
+            } else {
+                currentStep2 = 1;
+            }
+        }
+        console.log(step)
+    },
     function step1(step) { // set OFC Post value setting
         var post_select = document.getElementById("post_select")
         if (post_select) {
@@ -213,15 +227,25 @@ const functionsToExecute2 = [
                     break; // Exit the loop once a match is found
                 }
             }
+            currentStep2 = 2;
         }
         console.log(step)
     },
     function step2(step) { // open the Calendar
         var openCalendar = document.getElementById("datepicker");
         if(openCalendar){
-            openCalendar.focus();
-            var calendar = document.getElementById("ui-datepicker-div")
-            calendar.setAttribute("display", "block")
+            if(openCalendar.value == ""){
+                alert('Matched Data is not exist!')
+            } else {
+                if(openCalendar.value == "Loading..."){
+                    currentStep2 = 2;
+                } else {
+                    openCalendar.focus();
+                    var calendar = document.getElementById("ui-datepicker-div")
+                    calendar.style.display = "block"
+                    currentStep2 = 3;
+                }
+            }
         }
         console.log(step)
     },
@@ -261,6 +285,7 @@ const functionsToExecute2 = [
             }
             
             if(new Date(sel_date) >= new Date(cond_date_end)){
+                alert("No correct User Information!")
                 clearInterval(intervalId)
             }
 
@@ -274,11 +299,13 @@ const functionsToExecute2 = [
                         continue ;
                     }
                     if(element.classList.length > 0 && element.classList.contains("greenday")) {
-                        ele_matchDates.push(element)
-                        currentStep = 3;
+                        ele_matchTimes2.push(element)
+                        currentStep2 = 5;
+                        return;
                     }
                 }
             }
+            currentStep2 = 4;
         }
         console.log(step)
     },
@@ -286,10 +313,12 @@ const functionsToExecute2 = [
         
         var calender_mon_next = document.querySelector('[data-handler="next"]');
         if(!calender_mon_next){
+            alert("Matched Date is not exist!")
             clearInterval(intervalId);
         } else {
             calender_mon_next.click()
         }
+        currentStep2 = 3;
         console.log(step)
     },
     function step5(step) { // set a schedule time
@@ -298,10 +327,12 @@ const functionsToExecute2 = [
          */
         var available_btn = ele_matchDates[0];
         available_btn && available_btn.click();
+        currentStep2 = 6;
         /**
          * 
          */
-
+    },
+    function step6(step) {
         const timeRadios = document.querySelectorAll('[name="schedule-entries"]');
         for (let j = 0; j < timeRadios.length; j++) {
             const ele = timeRadios[j];
@@ -309,31 +340,25 @@ const functionsToExecute2 = [
             var u_s_t = convrtTime(userInfo["Consular-POST-starttime"]), u_e_t = convrtTime(userInfo["Consular-POST-endtime"]);
             if((new Date(a_time_cell) >= new Date(u_s_t)) && (new Date(a_time_cell) <= new Date(u_e_t))){
                 ele.click()
-                break ;
+                currentStep2 = 7;
+                return ;
             }
         }
-        console.log(step)
-    },
-    function step6(step) { // click the submit button
-        var submitBtn = document.getElementById("submitbtn");
-        submitBtn && submitBtn.click()
-        console.log(step);
+        alert("Matched Time not exist!")
         clearInterval(intervalId)
-    },
+        console.log(step)
+    }
+    // function step7(step) { // click the submit button
+    //     var submitBtn = document.getElementById("submitbtn");
+    //     submitBtn && submitBtn.click()
+    //     console.log(step);
+    //     clearInterval(intervalId)
+    // },
 ];
 
 function executeNextStep2() {
-    if (currentStep < functionsToExecute.length) {
-        if(currentStep > 3){
-            if(ele_matchDates.length == 0){
-                currentStep = 1;    
-            }
-        }
-        if(currentStep == 5){
-            clearInterval(intervalId);
-        }
-        functionsToExecute2[currentStep](currentStep);
-        currentStep++;
+    if (currentStep2 < functionsToExecute.length) {
+        functionsToExecute2[currentStep2](currentStep2);
     } else {
         clearInterval(intervalId);
     }
