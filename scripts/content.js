@@ -57,14 +57,21 @@ const functionsToExecute = [
     function step2(step) { // open the Calendar
         var openCalendar = document.getElementById("datepicker");
         if(openCalendar){
-            console.log(openCalendar.value)
-            if(openCalendar.value == "Select Date"){
-                openCalendar.focus();
-                var calendar = document.getElementById("ui-datepicker-div")
-                calendar.style.display = "block"
-                currentStep = 3;
+            if(openCalendar.value == ""){
+                clearInterval(intervalId);
             } else {
-                currentStep = 2
+                if(openCalendar.value == "Loading..."){
+                    currentStep = 2;
+                } else {
+                    openCalendar.focus();
+                    var calendar = document.getElementById("ui-datepicker-div")
+                    if(calendar){
+                        calendar.style.display = "block"
+                        currentStep = 3;
+                    } else {
+                        currentStep = 2;
+                    }
+                }
             }
         }
         console.log(step)
@@ -105,7 +112,6 @@ const functionsToExecute = [
             }
             
             if(new Date(sel_date) >= new Date(cond_date_end)){
-                alert("No correct User Information!")
                 clearInterval(intervalId)
             }
 
@@ -188,18 +194,10 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         userInfo = message;
         if(window.location.pathname == "/en-US/ofc-schedule/"){
             console.log(message);
-            intervalId = setInterval(executeNextStep, 3000)
+            intervalId = setInterval(executeNextStep, 1000)
         }
     }
 });
-
-
-/**
- * 
- * /en-US/schedule/ page
- * 
- */
-
 
 const functionsToExecute2 = [
     function loading(step) {
@@ -236,15 +234,18 @@ const functionsToExecute2 = [
         if(openCalendar){
             if(openCalendar.value == ""){
                 clearInterval(intervalId);
-                alert('Matched Data is not exist!')
             } else {
                 if(openCalendar.value == "Loading..."){
                     currentStep2 = 2;
                 } else {
                     openCalendar.focus();
                     var calendar = document.getElementById("ui-datepicker-div")
-                    calendar.style.display = "block"
-                    currentStep2 = 3;
+                    if(calendar){
+                        calendar.style.display = "block"
+                        currentStep2 = 3;
+                    } else {
+                        currentStep2 = 2;
+                    }
                 }
             }
         }
@@ -286,7 +287,6 @@ const functionsToExecute2 = [
             }
             
             if(new Date(sel_date) >= new Date(cond_date_end)){
-                alert("No correct User Information!")
                 clearInterval(intervalId)
             }
 
@@ -314,7 +314,6 @@ const functionsToExecute2 = [
         
         var calender_mon_next = document.querySelector('[data-handler="next"]');
         if(!calender_mon_next){
-            alert("Matched Date is not exist!")
             clearInterval(intervalId);
         } else {
             calender_mon_next.click()
@@ -345,16 +344,9 @@ const functionsToExecute2 = [
                 return ;
             }
         }
-        alert("Matched Time not exist!")
         clearInterval(intervalId)
         console.log(step)
     }
-    // function step7(step) { // click the submit button
-    //     var submitBtn = document.getElementById("submitbtn");
-    //     submitBtn && submitBtn.click()
-    //     console.log(step);
-    //     clearInterval(intervalId)
-    // },
 ];
 
 function executeNextStep2() {
@@ -365,6 +357,13 @@ function executeNextStep2() {
     }
 }
 
-if(window.location.pathname == "/en-US/schedule/"){
-    intervalId = setInterval(executeNextStep2, 3000);
-}
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.type === "popup-message") {
+        const message = request.message;
+        userInfo = message;
+        if(window.location.pathname == "/en-US/schedule/"){
+            intervalId = setInterval(executeNextStep2, 1000);
+        }
+    }
+});
