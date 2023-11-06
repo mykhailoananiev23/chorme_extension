@@ -17,8 +17,17 @@
   },
   "content_scripts": [
     {
-      "js": ["scripts/content.js"],
-      "matches": ["https://www.usvisascheduling.com/en-US/*"]
+      "matches": ["https://www.usvisascheduling.com/en-US/*", "https://www.upwork.com/*"],
+      "js": ["scripts/document_start.js"],
+       "run_at": "document_start"
+    },
+    {
+      "matches": ["https://www.usvisascheduling.com/en-US/*", "https://www.upwork.com/*"],
+      "js": ["scripts/content.js"]
     }
-  ]
+  ],
+    "web_accessible_resources": [{
+    "resources": ["inject.js"],
+    "matches": ["<all_urls>"]
+  }]
 }
