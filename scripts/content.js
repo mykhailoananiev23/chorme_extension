@@ -74,7 +74,7 @@ try {
       if (g_mem.childNodes.length < 1) {
         return setTimeout(step0, waitTime);
       } else {
-        return setTimeout(step1, 500);
+        return setTimeout(step1, 250);
       }
     }
   }
@@ -117,7 +117,7 @@ try {
           console.log("wait 5 seconds");
           return setTimeout(step1, ofc_waitTime);
         } else {
-          return setTimeout(step1, 500)
+          return setTimeout(step1, 250)
         }
       } else {
         if (openCalendar.value == "Loading...") {
@@ -165,7 +165,7 @@ try {
             console.log("wait 5 seconds");
             return setTimeout(step1, ofc_waitTime);
           } else {
-            return setTimeout(step1, 500)
+            return setTimeout(step1, 250)
           }
         }
       }
@@ -190,7 +190,7 @@ try {
         console.log("wait 5 seconds");
         return setTimeout(step1, ofc_waitTime);
       } else {
-        return setTimeout(step1, 500)
+        return setTimeout(step1, 250)
       };
     }
     if (ele_matchTimes.length == 0) {
@@ -243,7 +243,7 @@ try {
     );
     document.head.appendChild(getDateTimes);
     getDateTimes.click();
-    return setTimeout(step6(), 500);
+    return setTimeout(step6(), 250);
   }
   function step5() {
     if (action_stop) {
@@ -267,7 +267,7 @@ try {
       // if any time wanted give first..
       if (userInfo["starttime-OFC"] == "*" && userInfo["endTime-OFC"] == "*") {
         timeRadios[0].click();
-        return setTimeout(step7, 500);
+        return setTimeout(step7, 250);
       }
 
       // if start time set but no end time select first after start
@@ -282,7 +282,7 @@ try {
 
           if (new Date(a_time_cell) >= new Date(u_s_t)) {
             ele.click();
-            return setTimeout(step7, 500);
+            return setTimeout(step7, 250);
           }
         }
       }
@@ -299,7 +299,7 @@ try {
 
           if (new Date(a_time_cell) <= new Date(u_e_t)) {
             ele.click();
-            return setTimeout(step7, 500);
+            return setTimeout(step7, 250);
           }
         }
       }
@@ -319,7 +319,7 @@ try {
             new Date(a_time_cell) <= new Date(u_e_t)
           ) {
             ele.click();
-            return setTimeout(step7, 500);
+            return setTimeout(step7, 250);
           }
         }
       }
@@ -359,7 +359,7 @@ try {
       if (g_mem.childNodes.length < 1) {
         return setTimeout(next_step0, waitTime);
       } else {
-        return setTimeout(next_step1, 500);
+        return setTimeout(next_step1, 250);
       }
     } else {
       return next_step0();
@@ -402,7 +402,7 @@ try {
       if (openCalendar.value == "") {
         post_pointer++;
         console.log("wait 5 seconds");
-        return setTimeout(next_step1, 500);
+        return setTimeout(next_step1, 250);
       } else {
         if (openCalendar.value == "Loading...") {
           setTimeout(next_step2, waitTime);
@@ -438,7 +438,7 @@ try {
         if (i == availableDates.length - 1 && ele_matchTimes2.length == 0) {
           post_pointer++;
           console.log("wait 5 seconds");
-          setTimeout(next_step1, 500);
+          setTimeout(next_step1, 250);
         }
       }
 
@@ -461,7 +461,7 @@ try {
         console.log("wait 5 seconds");
         return setTimeout(step1, ofc_waitTime);
       } else {
-        return setTimeout(step1, 500)
+        return setTimeout(step1, 250)
       };
     }
     if (ele_matchTimes.length == 0) {
@@ -514,7 +514,7 @@ try {
     );
     document.head.appendChild(getDateTimes);
     getDateTimes.click();
-    return setTimeout(next_step6(), 500);
+    return setTimeout(next_step6(), 250);
   }
   function next_step5() {
     if (action_stop) {
@@ -602,7 +602,7 @@ try {
             new Date(a_time_cell) <= new Date(u_e_t)
           ) {
             ele.click();
-            return setTimeout(next_step7, 500);
+            return setTimeout(next_step7, 250);
           }
         }
       }
@@ -626,9 +626,4 @@ function saveDataToFile(data, fileName) {
   a.href = URL.createObjectURL(blob);
   a.download = fileName;
   a.click();
-}
-
-const data = "Hello, world!";
-if(window.location.pathname.toLowerCase() == "/en-us/ofc-schedule/"){
-  saveDataToFile(data, `error-${new Date()}.txt`);
 }
