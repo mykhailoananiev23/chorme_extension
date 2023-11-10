@@ -4,7 +4,7 @@
     const dataHolder = document.createElement("div");
     dataHolder.setAttribute("id", "myDataHolder");
     document.head.appendChild(dataHolder);
-
+    
     // define monkey patch function
     const monkeyPatch = () => {
       let oldXHROpen = window.XMLHttpRequest.prototype.open;
@@ -20,5 +20,6 @@
       };
     };
     monkeyPatch();
+    console.log("inject inject.js")
   }
 )();
