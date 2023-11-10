@@ -5,7 +5,7 @@ var post_pointer = 0, post_pointer2 = 0; // Post recyling value
 var lp_pos = 0,
   lp_pos2 = 0; // Matched Dates Loop event value
 var action_stop = false; // Stop Action Flag
-var ofc_waitTime = 1000; // default Post schedule waiting time.
+var ofc_waitTime = 500; // default Post schedule waiting time.
 
 // wait for data from plugin
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -74,7 +74,7 @@ try {
       if (g_mem.childNodes.length < 1) {
         return setTimeout(step0, waitTime);
       } else {
-        return setTimeout(step1, 500);
+        return setTimeout(step1, waitTime);
       }
     }
   }
@@ -117,7 +117,7 @@ try {
           console.log("wait 5 seconds");
           return setTimeout(step1, ofc_waitTime);
         } else {
-          return setTimeout(step1, 500)
+          return setTimeout(step1, waitTime)
         }
       } else {
         if (openCalendar.value == "Loading...") {
@@ -142,19 +142,22 @@ try {
     availableDates = availableDates.ScheduleDays;
 
     if (availableDates && availableDates.length > 0) {
+      console.log(availableDates)
       let cond_day_start = new Date(userInfo["startdate-OFC"]);
       let cond_day_end = new Date(userInfo["enddate-OFC"]);
-      let foundDate = null;
-      let foundDateObj = null;
 
       // search for date that matches critera
       for (let i = 0; i < availableDates.length; i++) {
         let availableDay = new Date(availableDates[i].Date);
+        console.log(availableDay)
 
-        if (availableDay >= cond_day_start && availableDay <= cond_day_end) {
+        if ((availableDay >= cond_day_start) && (availableDay <= cond_day_end)) {
           ele_matchTimes.push(availableDates[i]);
         }
-        if (i == availableDates.length - 1 && ele_matchTimes.length == 0) {
+        if(i == (availableDates.length - 1)){
+          console.log(ele_matchTimes.length)
+        }
+        if ((i == (availableDates.length - 1)) && (ele_matchTimes.length == 0)) {
           post_pointer++;
           console.log(
             `No matched data in ${
@@ -165,7 +168,7 @@ try {
             console.log("wait 5 seconds");
             return setTimeout(step1, ofc_waitTime);
           } else {
-            return setTimeout(step1, 500)
+            return setTimeout(step1, waitTime)
           }
         }
       }
@@ -190,7 +193,7 @@ try {
         console.log("wait 5 seconds");
         return setTimeout(step1, ofc_waitTime);
       } else {
-        return setTimeout(step1, 500)
+        return setTimeout(step1, waitTime)
       };
     }
     if (ele_matchTimes.length == 0) {
@@ -243,7 +246,7 @@ try {
     );
     document.head.appendChild(getDateTimes);
     getDateTimes.click();
-    return setTimeout(step6(), 500);
+    return setTimeout(step6(), waitTime);
   }
   function step5() {
     if (action_stop) {
@@ -252,7 +255,7 @@ try {
     // set a schedule time
     var available_btn = ele_matchDates[0];
     available_btn && available_btn.click();
-    return step6();
+    return setTimeout(step6, waitTime);
   }
   function step6() {
     if (action_stop) {
@@ -261,13 +264,14 @@ try {
     // click time that meets critera
     console.log(`6 : click time that meets critera`);
     const timeRadios = document.querySelectorAll('[name="schedule-entries"]');
+    console.log(timeRadios)
     if (timeRadios.length == 0) {
       setTimeout(step6, waitTime);
     } else {
       // if any time wanted give first..
       if (userInfo["starttime-OFC"] == "*" && userInfo["endTime-OFC"] == "*") {
         timeRadios[0].click();
-        return setTimeout(step7, 500);
+        return setTimeout(step7, waitTime);
       }
 
       // if start time set but no end time select first after start
@@ -282,7 +286,7 @@ try {
 
           if (new Date(a_time_cell) >= new Date(u_s_t)) {
             ele.click();
-            return setTimeout(step7, 500);
+            return setTimeout(step7, waitTime);
           }
         }
       }
@@ -299,7 +303,7 @@ try {
 
           if (new Date(a_time_cell) <= new Date(u_e_t)) {
             ele.click();
-            return setTimeout(step7, 500);
+            return setTimeout(step7, waitTime);
           }
         }
       }
@@ -307,6 +311,7 @@ try {
       // now if both set just go thru and select the one in between
       if (userInfo["starttime-OFC"] && userInfo["endTime-OFC"]) {
         for (let j = 0; j < timeRadios.length; j++) {
+          console.log(timeRadios[j])
           const ele = timeRadios[j];
           var a_time_cell = convrtTime(
             ele.parentNode.textContent.split(" ")[0]
@@ -319,7 +324,7 @@ try {
             new Date(a_time_cell) <= new Date(u_e_t)
           ) {
             ele.click();
-            return setTimeout(step7, 500);
+            return setTimeout(step7, waitTime);
           }
         }
       }
@@ -337,6 +342,7 @@ try {
     var submitBtn = document.getElementById("submitbtn");
     try {
       submitBtn && submitBtn.click();
+      ele_matchTimes = [];
     } catch (error) {
       error.message && chrome.runtime.sendMessage({ error: error.message });
       return false;
@@ -359,7 +365,7 @@ try {
       if (g_mem.childNodes.length < 1) {
         return setTimeout(next_step0, waitTime);
       } else {
-        return setTimeout(next_step1, 500);
+        return setTimeout(next_step1, waitTime);
       }
     } else {
       return next_step0();
@@ -390,7 +396,7 @@ try {
         }
       }
     }
-    return next_step2();
+    return setTimeout(next_step2, waitTime);
   }
   function next_step2() {
     if (action_stop) {
@@ -402,12 +408,12 @@ try {
       if (openCalendar.value == "") {
         post_pointer++;
         console.log("wait 5 seconds");
-        return setTimeout(next_step1, 500);
+        return setTimeout(next_step1, waitTime);
       } else {
         if (openCalendar.value == "Loading...") {
           setTimeout(next_step2, waitTime);
         } else if (openCalendar.value == "Select Date") {
-          return next_step3();
+          return setTimeout(next_step3, waitTime);
         }
       }
     }
@@ -438,7 +444,7 @@ try {
         if (i == availableDates.length - 1 && ele_matchTimes2.length == 0) {
           post_pointer++;
           console.log("wait 5 seconds");
-          setTimeout(next_step1, 500);
+          setTimeout(next_step1, waitTime);
         }
       }
 
@@ -446,7 +452,7 @@ try {
         console.log(`no date available that matches critera`);
         return;
       }
-      return next_step6();
+      return setTimeout(next_step6, 500);
     } else {
       return;
     }
@@ -461,7 +467,7 @@ try {
         console.log("wait 5 seconds");
         return setTimeout(step1, ofc_waitTime);
       } else {
-        return setTimeout(step1, 500)
+        return setTimeout(step1, waitTime)
       };
     }
     if (ele_matchTimes.length == 0) {
@@ -514,7 +520,7 @@ try {
     );
     document.head.appendChild(getDateTimes);
     getDateTimes.click();
-    return setTimeout(next_step6(), 500);
+    return setTimeout(next_step6, waitTime);
   }
   function next_step5() {
     if (action_stop) {
@@ -523,7 +529,7 @@ try {
     // set a schedule time
     var available_btn = ele_matchDates[0];
     available_btn && available_btn.click();
-    return next_step6();
+    return setTimeout(next_step6, waitTime);
   }
   function next_step6() {
     if (action_stop) {
@@ -541,7 +547,7 @@ try {
         userInfo["Consular-POST-endtime"] == "*"
       ) {
         timeRadios[0].click();
-        return next_step7();
+        return setTimeout(next_step7, waitTime);
       }
 
       // if start time set but no end time select first after start
@@ -559,7 +565,7 @@ try {
 
           if (new Date(a_time_cell) >= new Date(u_s_t)) {
             ele.click();
-            return next_step7();
+            return setTimeout(next_step7, waitTime);
           }
         }
       }
@@ -579,7 +585,7 @@ try {
 
           if (new Date(a_time_cell) <= new Date(u_e_t)) {
             ele.click();
-            return next_step7();
+            return setTimeout(next_step7, waitTime);
           }
         }
       }
@@ -602,20 +608,21 @@ try {
             new Date(a_time_cell) <= new Date(u_e_t)
           ) {
             ele.click();
-            return setTimeout(next_step7, 500);
+            return setTimeout(next_step7, waitTime);
           }
         }
       }
-
-      step2();
+      setTimeout(next_step2, waitTime)
     }
   }
   function next_step7() {
     if (action_stop) {
       return false;
     }
+    ele_matchTimes2 = []
   }
 } catch (error) {
+  action_stop = true;
   saveDataToFile(error, `error-${new Date()}.txt`)
 }
 
@@ -626,9 +633,4 @@ function saveDataToFile(data, fileName) {
   a.href = URL.createObjectURL(blob);
   a.download = fileName;
   a.click();
-}
-
-const data = "Hello, world!";
-if(window.location.pathname.toLowerCase() == "/en-us/ofc-schedule/"){
-  saveDataToFile(data, `error-${new Date()}.txt`);
 }
